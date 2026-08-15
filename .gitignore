@@ -1,0 +1,5 @@
+node_modules/
+gather.db
+gather.db-shm
+gather.db-wal
+.env

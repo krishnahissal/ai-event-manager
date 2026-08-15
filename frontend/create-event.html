@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Host an event — Gather</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Inter:wght@400;500&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="wrap">
+      <a class="logo" href="index.html">Gather<span>.</span></a>
+      <nav class="site-nav">
+      </nav>
+    </div>
+  </header>
+
+  <main class="form-page">
+    <div class="wrap">
+      <form class="form-card wide" id="create-form">
+        <p class="eyebrow">New event</p>
+        <h1>Put your event up</h1>
+        <p class="muted">People see the title and the date first, so make those clear.</p>
+
+        <div class="field">
+          <label for="title">Event name</label>
+          <input type="text" id="title" name="title" required
+                 placeholder="Sunday morning run: Vetal Tekdi loop">
+        </div>
+
+        <div class="field">
+          <label for="description">What happens</label>
+          <textarea id="description" name="description" required
+                    placeholder="What you will do, what to bring, who it is for."></textarea>
+        </div>
+
+        <div class="field-row">
+          <div class="field">
+            <label for="category">Category</label>
+            <select id="category" name="category" required>
+              <option>Workshop</option>
+              <option>Music</option>
+              <option>Outdoors</option>
+              <option>Sport</option>
+              <option>Craft</option>
+              <option>Community</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="capacity">Seats</label>
+            <input type="number" id="capacity" name="capacity" min="1" value="25" required>
+          </div>
+        </div>
+
+        <div class="field-row">
+          <div class="field">
+            <label for="startsAt">Starts</label>
+            <input type="datetime-local" id="startsAt" name="startsAt" required>
+          </div>
+          <div class="field">
+            <label for="endsAt">Ends</label>
+            <input type="datetime-local" id="endsAt" name="endsAt" required>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="venue">Venue</label>
+          <input type="text" id="venue" name="venue" required
+                 placeholder="Pagdandi Books Chai Cafe, Baner">
+        </div>
+
+        <div class="field-row">
+          <div class="field">
+            <label for="city">City</label>
+            <input type="text" id="city" name="city" value="Pune" required>
+          </div>
+          <div class="field">
+            <label for="price">Price in rupees (0 for free)</label>
+            <input type="number" id="price" name="price" min="0" value="0" required>
+          </div>
+        </div>
+
+        <div style="margin-top:26px">
+          <button type="submit" class="btn btn-block">Publish event</button>
+        </div>
+
+        <div class="notice hidden" id="create-notice"></div>
+      </form>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      Gather &mdash; a practice project. Nothing here is saved yet.
+    </div>
+  </footer>
+
+
+  <script src="js/main.js"></script>
+  <script src="js/create.js"></script>
+</body>
+</html>

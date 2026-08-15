@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gather — events happening near you</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Inter:wght@400;500&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="wrap">
+      <a class="logo" href="index.html">Gather<span>.</span></a>
+      <nav class="site-nav">
+        <a href="index.html" class="active">Browse</a>
+        <a href="create-event.html">Host an event</a>
+        <a href="dashboard.html">Dashboard</a>
+        <a href="login.html">Log in</a>
+        <a class="btn" href="register.html">Sign up</a>
+      </nav>
+    </div>
+  </header>
+
+  <section class="hero">
+    <div class="wrap">
+      <p class="eyebrow">Pune &middot; this month</p>
+      <h1>Something is <mark>happening</mark> near you this weekend.</h1>
+      <p>Runs, workshops, open mics and pottery classes, all put up by people
+         who live here. Find one, or host your own in about two minutes.</p>
+      <div class="hero-actions">
+        <a class="btn" href="#events">Browse events</a>
+        <a class="btn btn-ghost" href="create-event.html">Host an event</a>
+      </div>
+    </div>
+  </section>
+
+  <main class="wrap" id="events">
+    <div class="toolbar">
+      <input type="search" id="search" placeholder="Search by name, place or description" aria-label="Search events">
+      <select id="category" aria-label="Filter by category">
+        <option value="all">All categories</option>
+      </select>
+    </div>
+
+    <p class="eyebrow" id="result-count">Loading</p>
+
+    <div class="grid" id="event-grid"></div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      Gather &mdash; a practice project. Nothing here is saved yet.
+    </div>
+  </footer>
+
+
+  <script src="js/main.js"></script>
+  <script src="js/home.js"></script>
+</body>
+</html>
