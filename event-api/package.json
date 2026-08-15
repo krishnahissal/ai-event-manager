@@ -1,10 +1,13 @@
 {
   "name": "event-api",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "Gather — event listing and booking API, backed by PostgreSQL",
+  "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=20"
   },
   "keywords": [],
   "author": "",
@@ -12,8 +15,10 @@
   "type": "commonjs",
   "dependencies": {
     "bcryptjs": "^3.0.3",
-    "better-sqlite3": "^13.0.3",
+    "connect-pg-simple": "^10.0.0",
+    "dotenv": "^17.4.2",
     "express": "^5.2.1",
-    "express-session": "^1.19.0"
+    "express-session": "^1.19.0",
+    "pg": "^8.23.0"
   }
 }

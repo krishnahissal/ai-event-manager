@@ -1,394 +1,876 @@
 /* ==========================================================================
    Gather — stylesheet
-   Everything on the site is styled from this one file.
-   Change the values under :root and the whole site changes with them.
+
+   Everything on the site is styled from this one file. Change the values
+   under :root and the whole site changes with them.
+
+   Structure:
+     1. Tokens            — colours, type, spacing, shadow
+     2. Reset + base
+     3. Typography
+     4. Header + nav
+     5. Buttons
+     6. Hero
+     7. Toolbar
+     8. Ticket cards
+     9. Tags + badges
+    10. Empty states
+    11. Event detail
+    12. Forms
+    13. Tables + dashboard
+    14. Footer
+    15. Motion
+    16. Responsive
+   ========================================================================== */
+
+/* ==========================================================================
+   1. Tokens
    ========================================================================== */
 
 :root {
-  /* colours */
-  --ink:        #171a2b;   /* headings, body text */
-  --ink-soft:   #6b6d7c;   /* secondary text */
-  --paper:      #f2f2ef;   /* page background */
-  --card:       #ffffff;   /* card background */
-  --line:       #dedddb;   /* hairlines and borders */
-  --blue:       #2f2bbf;   /* primary action colour */
-  --blue-dark:  #221e94;
-  --amber:      #ffb703;   /* highlight / marker */
-  --red:        #c8392b;   /* errors, cancel */
+  /* --- brand ------------------------------------------------------------ */
+  --indigo:      #3a34d6;
+  --indigo-deep: #221e94;
+  --indigo-lift: #5b55f0;
+  --amber:       #ffb703;
+  --amber-deep:  #e09a00;
+  --red:         #d3402f;
+  --green:       #0e8a5f;
 
-  /* type */
+  /* --- surfaces --------------------------------------------------------- */
+  --paper:     #f4f3ef;
+  --paper-alt: #eceae4;
+  --card:      #ffffff;
+  --raised:    #ffffff;
+
+  /* --- ink -------------------------------------------------------------- */
+  --ink:      #14162b;
+  --ink-mid:  #4a4d63;
+  --ink-soft: #74778a;
+
+  /* --- lines ------------------------------------------------------------ */
+  --line:      #e2e0da;
+  --line-firm: #cfccc4;
+
+  /* --- type ------------------------------------------------------------- */
   --display: "Bricolage Grotesque", Georgia, serif;
-  --body:    "Inter", system-ui, sans-serif;
-  --mono:    "JetBrains Mono", ui-monospace, monospace;
+  --body:    "Inter", system-ui, -apple-system, sans-serif;
+  --mono:    "JetBrains Mono", ui-monospace, "SF Mono", monospace;
 
-  /* spacing + shape */
-  --radius: 6px;
-  --wrap:   1080px;
+  /* --- shape ------------------------------------------------------------ */
+  --r-sm: 8px;
+  --r:    14px;
+  --r-lg: 22px;
+  --r-pill: 999px;
+  --wrap: 1140px;
+
+  /* Layered shadows read as depth; a single big blur reads as fog. */
+  --shadow-sm: 0 1px 2px rgba(20, 22, 43, 0.05),
+               0 2px 6px rgba(20, 22, 43, 0.04);
+  --shadow:    0 2px 4px rgba(20, 22, 43, 0.05),
+               0 8px 20px rgba(20, 22, 43, 0.07);
+  --shadow-lg: 0 4px 8px rgba(20, 22, 43, 0.05),
+               0 18px 40px rgba(20, 22, 43, 0.11);
+  --shadow-glow: 0 8px 30px rgba(58, 52, 214, 0.28);
+
+  --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
+
+  /* Per-category accent, used on the ticket spine and detail poster. */
+  --cat-workshop:  #6d28d9;
+  --cat-music:     #be1558;
+  --cat-outdoors:  #0e7f5c;
+  --cat-sport:     #1d68c9;
+  --cat-craft:     #c2560f;
+  --cat-community: #3a34d6;
 }
 
-/* --- reset ---------------------------------------------------------------- */
+/* Dark mode is free if the palette is tokenised — only the values change. */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --paper:     #0e0f1a;
+    --paper-alt: #141625;
+    --card:      #181a2b;
+    --raised:    #1e2136;
 
-* { box-sizing: border-box; margin: 0; padding: 0; }
+    --ink:      #f0efff;
+    --ink-mid:  #b2b3c8;
+    --ink-soft: #8b8da4;
+
+    --line:      #2b2e45;
+    --line-firm: #3b3f5c;
+
+    --indigo:      #6f68ff;
+    --indigo-deep: #524bf0;
+    --indigo-lift: #8f89ff;
+
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+    --shadow:    0 2px 6px rgba(0, 0, 0, 0.4),
+                 0 10px 24px rgba(0, 0, 0, 0.35);
+    --shadow-lg: 0 6px 14px rgba(0, 0, 0, 0.45),
+                 0 22px 50px rgba(0, 0, 0, 0.5);
+    --shadow-glow: 0 8px 34px rgba(111, 104, 255, 0.38);
+
+    --cat-workshop:  #a78bfa;
+    --cat-music:     #f472b6;
+    --cat-outdoors:  #34d399;
+    --cat-sport:     #60a5fa;
+    --cat-craft:     #fb923c;
+    --cat-community: #8f89ff;
+  }
+}
+
+/* ==========================================================================
+   2. Reset + base
+   ========================================================================== */
+
+*,
+*::before,
+*::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
 
 body {
   font-family: var(--body);
   background: var(--paper);
   color: var(--ink);
-  line-height: 1.6;
+  line-height: 1.65;
   -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  /* A whisper of colour in the corners so the page is not a flat slab. */
+  background-image:
+    radial-gradient(720px 420px at 8% -8%, rgba(58, 52, 214, 0.07), transparent 70%),
+    radial-gradient(620px 380px at 100% 0%, rgba(255, 183, 3, 0.10), transparent 70%);
+  background-attachment: fixed;
 }
 
-a { color: var(--blue); }
+body > main { flex: 1; }
+
+a { color: var(--indigo); text-decoration-thickness: 1px; text-underline-offset: 2px; }
+a:hover { color: var(--indigo-deep); }
 
 img { max-width: 100%; display: block; }
 
+::selection { background: var(--amber); color: #14162b; }
+
 .wrap {
+  width: 100%;
   max-width: var(--wrap);
   margin: 0 auto;
   padding: 0 24px;
 }
 
-/* --- typography ----------------------------------------------------------- */
+/* One consistent focus ring everywhere, including inside cards. */
+:where(a, button, input, select, textarea, [tabindex]):focus-visible {
+  outline: 2px solid var(--indigo);
+  outline-offset: 3px;
+  border-radius: var(--r-sm);
+}
+
+/* ==========================================================================
+   3. Typography
+   ========================================================================== */
 
 h1, h2, h3 {
   font-family: var(--display);
-  font-weight: 600;
-  line-height: 1.1;
-  letter-spacing: -0.02em;
+  font-weight: 700;
+  line-height: 1.08;
+  letter-spacing: -0.025em;
+  text-wrap: balance;
 }
 
-h1 { font-size: clamp(2.2rem, 6vw, 3.6rem); }
-h2 { font-size: 1.6rem; }
-h3 { font-size: 1.15rem; }
+h1 { font-size: clamp(2.4rem, 6vw, 4rem); }
+h2 { font-size: clamp(1.5rem, 3vw, 1.9rem); }
+h3 { font-size: 1.18rem; letter-spacing: -0.015em; }
 
-/* small uppercase label used above sections and on form fields */
+/* Small uppercase label used above sections and on form fields. */
 .eyebrow {
   font-family: var(--mono);
   font-size: 0.72rem;
-  letter-spacing: 0.14em;
+  font-weight: 700;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
   color: var(--ink-soft);
 }
 
+.eyebrow a { color: inherit; text-decoration: none; }
+.eyebrow a:hover { color: var(--indigo); }
+
 .muted { color: var(--ink-soft); }
 
-/* --- header --------------------------------------------------------------- */
+code {
+  font-family: var(--mono);
+  font-size: 0.88em;
+  padding: 2px 6px;
+  border-radius: 5px;
+  background: var(--paper-alt);
+  border: 1px solid var(--line);
+}
+
+/* ==========================================================================
+   4. Header + nav
+   ========================================================================== */
 
 .site-header {
-  background: var(--card);
-  border-bottom: 1px solid var(--line);
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: color-mix(in srgb, var(--card) 78%, transparent);
+  backdrop-filter: saturate(180%) blur(14px);
+  -webkit-backdrop-filter: saturate(180%) blur(14px);
+  border-bottom: 1px solid transparent;
+  transition: border-color 0.25s var(--ease), box-shadow 0.25s var(--ease),
+              background 0.25s var(--ease);
+}
+
+/* main.js adds .scrolled once the page moves, so the header only grows a
+   border when there is content behind it to separate from. */
+.site-header.scrolled {
+  border-bottom-color: var(--line);
+  box-shadow: var(--shadow-sm);
+  background: color-mix(in srgb, var(--card) 92%, transparent);
 }
 
 .site-header .wrap {
   display: flex;
   align-items: center;
   gap: 24px;
-  height: 68px;
+  min-height: 72px;
 }
 
 .logo {
   font-family: var(--display);
-  font-size: 1.35rem;
-  font-weight: 700;
+  font-size: 1.45rem;
+  font-weight: 800;
   color: var(--ink);
   text-decoration: none;
-  letter-spacing: -0.03em;
+  letter-spacing: -0.04em;
+  display: inline-flex;
+  align-items: baseline;
 }
 
-.logo span { color: var(--blue); }
+.logo span {
+  color: var(--indigo);
+  font-size: 1.6em;
+  line-height: 0;
+}
 
 .site-nav {
   display: flex;
   align-items: center;
-  gap: 20px;
+  gap: 6px;
   margin-left: auto;
   font-size: 0.92rem;
 }
 
 .site-nav a {
-  color: var(--ink);
+  position: relative;
+  color: var(--ink-mid);
   text-decoration: none;
+  padding: 8px 12px;
+  border-radius: var(--r-pill);
+  font-weight: 500;
+  transition: color 0.18s var(--ease), background 0.18s var(--ease);
 }
 
-.site-nav a:hover { color: var(--blue); }
+.site-nav a:not(.btn):hover {
+  color: var(--ink);
+  background: color-mix(in srgb, var(--ink) 6%, transparent);
+}
 
-.site-nav a.active { border-bottom: 2px solid var(--amber); }
+/* The active page gets an underline that grows from the centre. */
+.site-nav a.active { color: var(--ink); font-weight: 600; }
 
-/* --- buttons -------------------------------------------------------------- */
+.site-nav a.active::after {
+  content: "";
+  position: absolute;
+  left: 12px;
+  right: 12px;
+  bottom: 2px;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--amber);
+}
+
+.site-nav .btn { padding: 9px 18px; }
+.site-nav .muted { padding: 0 4px; white-space: nowrap; }
+
+/* `.site-nav a` is more specific than `.btn`, so without these two rules the
+   Sign up and Log out buttons inherit the muted nav colour and the label
+   nearly vanishes against the indigo fill. */
+.site-nav a.btn { color: #fff; }
+.site-nav a.btn-ghost { color: var(--indigo); }
+.site-nav a.btn-ghost:hover { color: var(--indigo-deep); }
+
+/* ==========================================================================
+   5. Buttons
+   ========================================================================== */
 
 .btn {
-  display: inline-block;
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
   font-family: var(--body);
-  font-size: 0.92rem;
-  font-weight: 500;
-  padding: 10px 20px;
-  border: 1px solid var(--blue);
-  border-radius: var(--radius);
-  background: var(--blue);
+  font-size: 0.93rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  padding: 11px 22px;
+  border: 1px solid transparent;
+  border-radius: var(--r-pill);
+  background: linear-gradient(180deg, var(--indigo-lift), var(--indigo));
   color: #fff;
   text-decoration: none;
   cursor: pointer;
-  transition: background 0.15s;
+  white-space: nowrap;
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.18s var(--ease), box-shadow 0.18s var(--ease),
+              filter 0.18s var(--ease), background 0.18s var(--ease);
 }
 
-.btn:hover { background: var(--blue-dark); }
+.btn:hover {
+  color: #fff;
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-glow);
+  filter: saturate(115%);
+}
+
+.btn:active { transform: translateY(0); box-shadow: var(--shadow-sm); }
+
+.btn[disabled],
+.btn:disabled {
+  background: var(--paper-alt);
+  color: var(--ink-soft);
+  border-color: var(--line);
+  box-shadow: none;
+  cursor: not-allowed;
+  transform: none;
+  filter: none;
+}
 
 .btn-ghost {
   background: transparent;
-  color: var(--blue);
+  color: var(--indigo);
+  border-color: var(--line-firm);
+  box-shadow: none;
+  font-weight: 500;
 }
 
-.btn-ghost:hover { background: rgba(47, 43, 191, 0.07); }
-
-.btn-block { display: block; width: 100%; text-align: center; }
-
-.btn:focus-visible,
-a:focus-visible,
-input:focus-visible,
-select:focus-visible,
-textarea:focus-visible {
-  outline: 2px solid var(--amber);
-  outline-offset: 2px;
+.btn-ghost:hover {
+  color: var(--indigo-deep);
+  background: color-mix(in srgb, var(--indigo) 8%, transparent);
+  border-color: var(--indigo);
+  box-shadow: none;
 }
 
-/* --- hero ----------------------------------------------------------------- */
+.btn-block { display: flex; width: 100%; }
+
+/* Buttons sitting inside a table row should not shout. */
+.table .btn-ghost { padding: 6px 14px; font-size: 0.85rem; }
+
+/* ==========================================================================
+   6. Hero
+   ========================================================================== */
 
 .hero {
-  padding: 72px 0 48px;
-  border-bottom: 1px solid var(--line);
+  position: relative;
+  padding: clamp(52px, 8vw, 92px) 0 clamp(32px, 4vw, 52px);
+  overflow: hidden;
 }
 
-.hero h1 { max-width: 16ch; }
+/* Two soft colour fields behind the headline. */
+.hero::before {
+  content: "";
+  position: absolute;
+  inset: -40% -10% auto -20%;
+  height: 130%;
+  background:
+    radial-gradient(46% 52% at 22% 34%, rgba(58, 52, 214, 0.20), transparent 62%),
+    radial-gradient(40% 46% at 76% 18%, rgba(255, 183, 3, 0.26), transparent 64%),
+    radial-gradient(34% 40% at 62% 78%, rgba(190, 21, 88, 0.13), transparent 66%);
+  filter: blur(14px);
+  pointer-events: none;
+  animation: drift 22s ease-in-out infinite alternate;
+}
 
-/* the amber marker behind a word in the headline */
+/* A faint grid, so the soft blobs have something crisp to sit against. */
+.hero::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(to right, color-mix(in srgb, var(--ink) 6%, transparent) 1px, transparent 1px),
+    linear-gradient(to bottom, color-mix(in srgb, var(--ink) 6%, transparent) 1px, transparent 1px);
+  background-size: 68px 68px;
+  mask-image: radial-gradient(75% 70% at 50% 42%, #000, transparent 78%);
+  -webkit-mask-image: radial-gradient(75% 70% at 50% 42%, #000, transparent 78%);
+  pointer-events: none;
+}
+
+.hero .wrap { position: relative; z-index: 1; }
+
+.hero h1 { max-width: 15ch; }
+
+/* The amber marker behind a word in the headline, drawn on load. */
 .hero h1 mark {
-  background: linear-gradient(transparent 62%, var(--amber) 62%);
+  position: relative;
+  background: none;
   color: inherit;
+  white-space: nowrap;
+}
+
+.hero h1 mark::before {
+  content: "";
+  position: absolute;
+  left: -0.08em;
+  right: -0.08em;
+  bottom: 0.08em;
+  height: 0.36em;
+  background: var(--amber);
+  border-radius: 3px;
+  z-index: -1;
+  transform-origin: left center;
+  animation: swipe 0.75s var(--ease) 0.25s both;
 }
 
 .hero p {
-  max-width: 46ch;
-  margin-top: 18px;
-  font-size: 1.05rem;
-  color: var(--ink-soft);
+  max-width: 48ch;
+  margin-top: 20px;
+  font-size: clamp(1rem, 1.6vw, 1.13rem);
+  color: var(--ink-mid);
 }
 
-.hero-actions { margin-top: 28px; display: flex; gap: 12px; flex-wrap: wrap; }
+.hero-actions {
+  margin-top: 32px;
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
 
-/* --- search + filter bar -------------------------------------------------- */
+/* ==========================================================================
+   7. Toolbar (search + filter)
+   ========================================================================== */
 
 .toolbar {
   display: flex;
   gap: 12px;
   flex-wrap: wrap;
-  padding: 28px 0;
+  padding: 32px 0 8px;
 }
 
 .toolbar input,
 .toolbar select {
   font-family: var(--body);
   font-size: 0.95rem;
-  padding: 10px 14px;
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
-  background: var(--card);
   color: var(--ink);
+  padding: 13px 18px;
+  border: 1px solid var(--line);
+  border-radius: var(--r-pill);
+  background: var(--card);
+  box-shadow: var(--shadow-sm);
+  transition: border-color 0.18s var(--ease), box-shadow 0.18s var(--ease);
 }
 
-.toolbar input { flex: 1; min-width: 220px; }
+.toolbar input {
+  flex: 1;
+  min-width: 240px;
+  /* Magnifier drawn inline so the page needs no image files. */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2374778a' stroke-width='2' stroke-linecap='round'%3E%3Ccircle cx='11' cy='11' r='7'/%3E%3Cpath d='m20 20-3.6-3.6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: 18px center;
+  background-size: 17px;
+  padding-left: 46px;
+}
 
-/* --- event grid ----------------------------------------------------------- */
+.toolbar select { padding-right: 40px; cursor: pointer; }
+
+.toolbar input:hover,
+.toolbar select:hover { border-color: var(--line-firm); }
+
+.toolbar input:focus,
+.toolbar select:focus {
+  outline: none;
+  border-color: var(--indigo);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--indigo) 16%, transparent);
+}
+
+#result-count { padding: 14px 0 4px; }
+
+/* ==========================================================================
+   8. Ticket cards
+
+   The signature piece. A stub on the left holds the date, a dashed line acts
+   as the perforation, and two circles the colour of the page background sit
+   on top of it to look like punched notches.
+   ========================================================================== */
 
 .grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-  gap: 20px;
-  padding-bottom: 72px;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 22px;
+  padding: 18px 0 88px;
 }
-
-/* --- the ticket card ------------------------------------------------------
-   This is the signature piece. A stub on the left holds the date, a dashed
-   line acts as the perforation, and two circles the colour of the page
-   background sit on top of it to look like punched notches.
-   -------------------------------------------------------------------------- */
 
 .ticket {
   position: relative;
   display: flex;
+  isolation: isolate;
   background: var(--card);
   border: 1px solid var(--line);
-  border-radius: var(--radius);
-  overflow: hidden;
+  border-radius: var(--r);
   text-decoration: none;
   color: inherit;
-  transition: border-color 0.15s, transform 0.15s;
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.22s var(--ease), box-shadow 0.22s var(--ease),
+              border-color 0.22s var(--ease);
+  animation: rise 0.5s var(--ease) both;
+}
+
+/* A coloured spine down the left edge, keyed to the category. */
+.ticket::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  border-radius: var(--r) 0 0 var(--r);
+  background: var(--accent, var(--indigo));
+  z-index: 2;
 }
 
 .ticket:hover {
-  border-color: var(--ink);
-  transform: translateY(-2px);
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
+  border-color: var(--line-firm);
 }
 
+.ticket:active { transform: translateY(-1px); }
+
+/* Category accents. main.js stamps data-category onto each card. */
+.ticket[data-category="Workshop"]  { --accent: var(--cat-workshop); }
+.ticket[data-category="Music"]     { --accent: var(--cat-music); }
+.ticket[data-category="Outdoors"]  { --accent: var(--cat-outdoors); }
+.ticket[data-category="Sport"]     { --accent: var(--cat-sport); }
+.ticket[data-category="Craft"]     { --accent: var(--cat-craft); }
+.ticket[data-category="Community"] { --accent: var(--cat-community); }
+
 .ticket-stub {
-  flex: 0 0 96px;
-  padding: 18px 12px;
+  position: relative;
+  flex: 0 0 104px;
+  padding: 20px 12px;
   text-align: center;
   font-family: var(--mono);
-  border-right: 1px dashed var(--line);
+  border-right: 2px dashed var(--line);
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--accent, var(--indigo)) 9%, transparent),
+    transparent 65%
+  );
+  border-radius: var(--r) 0 0 var(--r);
 }
 
 .ticket-stub .day {
-  font-size: 1.9rem;
+  font-size: 2.1rem;
   font-weight: 700;
   line-height: 1;
+  letter-spacing: -0.04em;
+  color: var(--accent, var(--indigo));
 }
 
 .ticket-stub .month {
-  font-size: 0.72rem;
-  letter-spacing: 0.12em;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
-  color: var(--ink-soft);
-  margin-top: 4px;
+  color: var(--ink-mid);
+  margin-top: 6px;
 }
 
 .ticket-stub .time {
   font-size: 0.72rem;
   color: var(--ink-soft);
-  margin-top: 12px;
+  margin-top: 14px;
+  padding-top: 10px;
+  border-top: 1px solid var(--line);
 }
 
-/* the two punched notches */
+/* The two punched notches. */
 .ticket-stub::before,
 .ticket-stub::after {
   content: "";
   position: absolute;
-  left: 96px;
-  width: 12px;
-  height: 12px;
+  left: 100%;
+  width: 14px;
+  height: 14px;
   background: var(--paper);
   border: 1px solid var(--line);
   border-radius: 50%;
   transform: translateX(-50%);
+  z-index: 3;
 }
 
-.ticket-stub::before { top: -7px; }
-.ticket-stub::after  { bottom: -7px; }
+.ticket-stub::before { top: -8px; }
+.ticket-stub::after  { bottom: -8px; }
 
-.ticket-body { padding: 18px 20px; flex: 1; }
+.ticket-body {
+  padding: 20px 22px;
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
 
-.ticket-body h3 { margin-bottom: 6px; }
+.ticket-body h3 {
+  margin-bottom: 6px;
+  transition: color 0.18s var(--ease);
+  /* Two lines maximum, so cards in a row stay the same height. */
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.ticket:hover .ticket-body h3 { color: var(--indigo); }
+
+.ticket-body > .muted {
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
 
 .ticket-meta {
-  font-size: 0.85rem;
+  font-size: 0.84rem;
   color: var(--ink-soft);
   display: flex;
+  align-items: center;
   flex-wrap: wrap;
-  gap: 4px 10px;
-  margin-top: 10px;
+  gap: 6px 10px;
+  margin-top: auto;
+  padding-top: 14px;
 }
+
+/* main.js puts a "·" between the price and the seat count. The flex gap
+   already separates them, and when the row wraps the dot is left stranded
+   at the end of a line, so it is hidden here rather than edited out of the
+   template. It is always the second-to-last child. */
+.ticket-meta span:nth-last-child(2) { display: none; }
+
+/* ==========================================================================
+   9. Tags + badges
+   ========================================================================== */
 
 .tag {
   display: inline-block;
   font-family: var(--mono);
-  font-size: 0.68rem;
+  font-size: 0.67rem;
+  font-weight: 700;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  padding: 3px 8px;
-  border-radius: 3px;
-  background: var(--paper);
+  padding: 4px 10px;
+  border-radius: var(--r-pill);
+  background: var(--paper-alt);
   border: 1px solid var(--line);
-  color: var(--ink-soft);
+  color: var(--ink-mid);
+  white-space: nowrap;
 }
 
-.tag-free { background: var(--amber); border-color: var(--amber); color: var(--ink); }
-.tag-full { background: var(--red); border-color: var(--red); color: #fff; }
+/* The category tag borrows the card's accent. */
+.ticket-meta .tag:first-child {
+  background: color-mix(in srgb, var(--accent, var(--indigo)) 12%, transparent);
+  border-color: color-mix(in srgb, var(--accent, var(--indigo)) 30%, transparent);
+  color: var(--accent, var(--indigo));
+}
 
-/* --- empty state ---------------------------------------------------------- */
+.tag-free {
+  background: color-mix(in srgb, var(--amber) 26%, transparent);
+  border-color: var(--amber);
+  color: var(--ink);
+}
+
+.tag-full {
+  background: color-mix(in srgb, var(--red) 14%, transparent);
+  border-color: color-mix(in srgb, var(--red) 45%, transparent);
+  color: var(--red);
+}
+
+/* ==========================================================================
+   10. Empty states
+   ========================================================================== */
 
 .empty {
   grid-column: 1 / -1;
-  padding: 56px 24px;
+  padding: 72px 28px;
   text-align: center;
-  border: 1px dashed var(--line);
-  border-radius: var(--radius);
+  border: 1px dashed var(--line-firm);
+  border-radius: var(--r-lg);
+  background: color-mix(in srgb, var(--card) 55%, transparent);
 }
 
-/* --- event detail page ---------------------------------------------------- */
+.empty h3 { font-size: 1.35rem; margin-bottom: 8px; }
+.empty p { max-width: 42ch; margin: 0 auto; }
+
+/* ==========================================================================
+   11. Event detail
+   ========================================================================== */
 
 .poster {
-  height: 220px;
+  position: relative;
+  height: clamp(200px, 30vw, 300px);
   display: flex;
   align-items: flex-end;
-  padding: 24px;
-  border-radius: var(--radius);
-  margin-bottom: 28px;
+  padding: 28px;
+  border-radius: var(--r-lg);
+  margin-bottom: 32px;
+  overflow: hidden;
   font-family: var(--mono);
-  font-size: 0.8rem;
-  letter-spacing: 0.2em;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.22em;
   text-transform: uppercase;
   color: #fff;
-  background: var(--ink);
+  box-shadow: var(--shadow);
+}
+
+/* The inline background colour comes from the event row; these two layers
+   turn that flat fill into something with light in it. */
+.poster::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(60% 80% at 15% 10%, rgba(255, 255, 255, 0.34), transparent 60%),
+    radial-gradient(50% 70% at 88% 95%, rgba(0, 0, 0, 0.42), transparent 62%);
+}
+
+/* Fine diagonal weave, so large areas of colour are not dead flat. */
+.poster::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: repeating-linear-gradient(
+    -45deg,
+    rgba(255, 255, 255, 0.06) 0 2px,
+    transparent 2px 9px
+  );
+}
+
+.poster > * { position: relative; z-index: 1; }
+
+/* The text node itself sits above both overlays. */
+.poster {
+  text-shadow: 0 1px 12px rgba(0, 0, 0, 0.4);
 }
 
 .detail-layout {
   display: grid;
-  grid-template-columns: 1fr 320px;
-  gap: 40px;
-  padding-bottom: 72px;
+  grid-template-columns: minmax(0, 1fr) 340px;
+  gap: 48px;
+  padding-bottom: 88px;
+  align-items: start;
 }
 
-.detail-body p { margin-top: 16px; }
+.detail-body h1 { font-size: clamp(2rem, 4.5vw, 3rem); }
+
+.detail-body p {
+  margin-top: 18px;
+  font-size: 1.05rem;
+  color: var(--ink-mid);
+  max-width: 68ch;
+}
+
+.detail-body h2 {
+  padding-top: 12px;
+  border-top: 1px solid var(--line);
+}
 
 .panel {
-  background: var(--card);
+  position: sticky;
+  top: 96px;
+  background: var(--raised);
   border: 1px solid var(--line);
-  border-radius: var(--radius);
-  padding: 22px;
-  align-self: start;
+  border-radius: var(--r-lg);
+  padding: 26px;
+  box-shadow: var(--shadow);
 }
 
-.panel dl { margin: 0 0 18px; }
+.panel dl { margin: 0 0 22px; }
 
 .panel dt {
   font-family: var(--mono);
-  font-size: 0.7rem;
-  letter-spacing: 0.12em;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--ink-soft);
-  margin-top: 14px;
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
 }
 
-.panel dd { margin: 2px 0 0; }
+.panel dd {
+  margin: 4px 0 0;
+  font-weight: 500;
+  color: var(--ink);
+}
 
-.panel dt:first-child { margin-top: 0; }
+.panel dt:first-child { margin-top: 0; padding-top: 0; border-top: none; }
 
-/* --- forms ---------------------------------------------------------------- */
+#seats-left { font-family: var(--mono); font-weight: 700; }
 
-.form-page { padding: 56px 0 80px; }
+/* Admin stat cards reuse .panel but must not stick or stack. */
+#stats .panel { position: static; top: auto; min-width: 180px; }
+#stats .panel p:last-child { color: var(--indigo); letter-spacing: -0.03em; }
+
+/* ==========================================================================
+   12. Forms
+   ========================================================================== */
+
+.form-page { padding: clamp(40px, 7vw, 72px) 0 88px; }
 
 .form-card {
-  max-width: 480px;
+  position: relative;
+  max-width: 500px;
   margin: 0 auto;
-  background: var(--card);
+  background: var(--raised);
   border: 1px solid var(--line);
-  border-radius: var(--radius);
-  padding: 32px;
+  border-radius: var(--r-lg);
+  padding: clamp(28px, 5vw, 40px);
+  box-shadow: var(--shadow-lg);
 }
 
-.form-card.wide { max-width: 680px; }
+/* A hairline of colour along the top edge of the card. */
+.form-card::before {
+  content: "";
+  position: absolute;
+  left: 24px;
+  right: 24px;
+  top: 0;
+  height: 3px;
+  border-radius: 0 0 3px 3px;
+  background: linear-gradient(90deg, var(--indigo), var(--amber));
+}
 
-.form-card h1 { font-size: 1.9rem; margin-bottom: 6px; }
+.form-card.wide { max-width: 720px; }
 
-.field { margin-top: 20px; }
+.form-card h1 { font-size: clamp(1.7rem, 3.4vw, 2.1rem); margin-bottom: 8px; }
+.form-card > .muted { margin-bottom: 4px; }
+
+.field { margin-top: 22px; }
 
 .field label {
   display: block;
   font-family: var(--mono);
-  font-size: 0.72rem;
-  letter-spacing: 0.12em;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.13em;
   text-transform: uppercase;
   color: var(--ink-soft);
-  margin-bottom: 6px;
+  margin-bottom: 8px;
 }
 
 .field input,
@@ -397,96 +879,208 @@ textarea:focus-visible {
   width: 100%;
   font-family: var(--body);
   font-size: 0.98rem;
-  padding: 11px 13px;
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
-  background: var(--paper);
   color: var(--ink);
+  padding: 13px 15px;
+  border: 1px solid var(--line);
+  border-radius: var(--r-sm);
+  background: var(--paper);
+  transition: border-color 0.18s var(--ease), box-shadow 0.18s var(--ease),
+              background 0.18s var(--ease);
 }
 
-.field textarea { min-height: 130px; resize: vertical; }
+.field input:hover,
+.field select:hover,
+.field textarea:hover { border-color: var(--line-firm); }
 
-.field-row { display: flex; gap: 16px; }
-.field-row .field { flex: 1; }
+.field input:focus,
+.field select:focus,
+.field textarea:focus {
+  outline: none;
+  background: var(--card);
+  border-color: var(--indigo);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--indigo) 15%, transparent);
+}
+
+.field textarea { min-height: 140px; resize: vertical; line-height: 1.6; }
+
+.field-row { display: flex; gap: 18px; }
+.field-row .field { flex: 1; min-width: 0; }
 
 .form-foot {
-  margin-top: 26px;
+  margin-top: 28px;
+  padding-top: 20px;
+  border-top: 1px solid var(--line);
   font-size: 0.9rem;
   text-align: center;
   color: var(--ink-soft);
 }
 
-/* message shown after a form is submitted */
+/* Message shown after a form is submitted. */
 .notice {
-  margin-top: 20px;
-  padding: 14px 16px;
-  border-radius: var(--radius);
-  border-left: 3px solid var(--blue);
-  border-radius: 0;
-  background: #fff;
-  font-size: 0.9rem;
+  margin-top: 22px;
+  padding: 14px 18px;
+  border-radius: var(--r-sm);
+  border: 1px solid color-mix(in srgb, var(--indigo) 26%, transparent);
+  border-left: 3px solid var(--indigo);
+  background: color-mix(in srgb, var(--indigo) 8%, transparent);
+  color: var(--ink);
+  font-size: 0.92rem;
+  animation: rise 0.35s var(--ease) both;
 }
 
 .notice.hidden { display: none; }
 
-/* --- dashboard ------------------------------------------------------------ */
+/* ==========================================================================
+   13. Tables + dashboard
+   ========================================================================== */
 
-.dash { padding: 48px 0 80px; }
+.dash { padding: clamp(36px, 6vw, 60px) 0 88px; }
 
-.dash-section { margin-top: 40px; }
+.dash-section { margin-top: 48px; }
 
+.dash-section h2 {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.dash-section h2::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: var(--line);
+}
+
+/* Narrow screens scroll the table sideways rather than crushing it. */
 .table {
   width: 100%;
-  border-collapse: collapse;
+  border-collapse: separate;
+  border-spacing: 0;
   background: var(--card);
   border: 1px solid var(--line);
-  border-radius: var(--radius);
+  border-radius: var(--r);
   overflow: hidden;
-  margin-top: 16px;
-  font-size: 0.92rem;
+  margin-top: 18px;
+  font-size: 0.93rem;
+  box-shadow: var(--shadow-sm);
 }
 
 .table th {
   text-align: left;
   font-family: var(--mono);
-  font-size: 0.7rem;
-  letter-spacing: 0.1em;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--ink-soft);
-  font-weight: 400;
-  padding: 12px 16px;
+  padding: 14px 18px;
+  background: var(--paper-alt);
   border-bottom: 1px solid var(--line);
+  white-space: nowrap;
 }
 
 .table td {
-  padding: 14px 16px;
+  padding: 15px 18px;
   border-bottom: 1px solid var(--line);
+  vertical-align: middle;
 }
 
-.table tr:last-child td { border-bottom: none; }
+.table tbody tr { transition: background 0.15s var(--ease); }
+.table tbody tr:hover { background: color-mix(in srgb, var(--indigo) 4%, transparent); }
+.table tbody tr:last-child td { border-bottom: none; }
 
-/* --- footer --------------------------------------------------------------- */
+.table td a { font-weight: 600; text-decoration: none; }
+.table td a:hover { text-decoration: underline; }
+
+/* ==========================================================================
+   14. Footer
+   ========================================================================== */
 
 .site-footer {
   border-top: 1px solid var(--line);
-  padding: 32px 0;
-  font-size: 0.85rem;
+  padding: 36px 0;
+  font-size: 0.88rem;
   color: var(--ink-soft);
+  background: color-mix(in srgb, var(--card) 45%, transparent);
 }
 
-/* --- responsive ----------------------------------------------------------- */
+/* ==========================================================================
+   15. Motion
+   ========================================================================== */
 
-@media (max-width: 800px) {
-  .detail-layout { grid-template-columns: 1fr; }
-  .site-nav { gap: 14px; font-size: 0.85rem; }
-  .site-header .wrap { height: auto; padding-top: 14px; padding-bottom: 14px; flex-wrap: wrap; }
+@keyframes rise {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes swipe {
+  from { transform: scaleX(0); }
+  to   { transform: scaleX(1); }
+}
+
+@keyframes drift {
+  from { transform: translate3d(0, 0, 0) scale(1); }
+  to   { transform: translate3d(3%, 2%, 0) scale(1.08); }
+}
+
+/* Stagger the first cards in, then stop — a long list should not ripple
+   for two seconds before it settles. */
+.ticket:nth-child(1) { animation-delay: 0.02s; }
+.ticket:nth-child(2) { animation-delay: 0.06s; }
+.ticket:nth-child(3) { animation-delay: 0.10s; }
+.ticket:nth-child(4) { animation-delay: 0.14s; }
+.ticket:nth-child(5) { animation-delay: 0.18s; }
+.ticket:nth-child(6) { animation-delay: 0.22s; }
+
+/* ==========================================================================
+   16. Responsive
+   ========================================================================== */
+
+@media (max-width: 900px) {
+  .detail-layout { grid-template-columns: 1fr; gap: 32px; }
+  .panel { position: static; }
+}
+
+@media (max-width: 760px) {
+  .site-header .wrap {
+    min-height: auto;
+    padding-top: 12px;
+    padding-bottom: 12px;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .site-nav {
+    width: 100%;
+    margin-left: 0;
+    gap: 4px;
+    font-size: 0.86rem;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .site-nav::-webkit-scrollbar { display: none; }
+  .site-nav a { padding: 7px 10px; }
+
+  .grid { grid-template-columns: 1fr; }
+
+  /* Tables get a horizontal scroll rather than illegible squeezed columns. */
+  .table { display: block; overflow-x: auto; white-space: nowrap; }
 }
 
 @media (max-width: 520px) {
+  .wrap { padding: 0 18px; }
   .field-row { flex-direction: column; gap: 0; }
-  .hero { padding: 48px 0 36px; }
+  .hero-actions .btn { flex: 1; }
+  .ticket-stub { flex-basis: 88px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  * { transition: none !important; }
+  html { scroll-behavior: auto; }
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+  }
 }

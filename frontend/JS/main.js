@@ -139,7 +139,8 @@ function ticketCardHtml(event) {
   }
 
   return `
-    <a class="ticket" href="event.html?id=${event.id}">
+    <a class="ticket" data-category="${escapeHtml(event.category)}"
+       href="event.html?id=${event.id}">
       <div class="ticket-stub">
         <div class="day">${date.day}</div>
         <div class="month">${date.month}</div>
@@ -159,3 +160,24 @@ function ticketCardHtml(event) {
     </a>
   `;
 }
+
+/* ==========================================================================
+   Header on scroll
+
+   The header is transparent over the top of the page and grows a border and
+   a shadow once there is content behind it. Doing this in CSS alone is not
+   possible, but it is three lines here.
+
+   passive: true tells the browser we will never call preventDefault, so it
+   can keep scrolling smoothly instead of waiting on this handler.
+   ========================================================================== */
+
+(function watchScroll() {
+  const header = document.querySelector(".site-header");
+  if (!header) return;
+
+  const sync = () => header.classList.toggle("scrolled", window.scrollY > 8);
+
+  sync();
+  window.addEventListener("scroll", sync, { passive: true });
+})();
